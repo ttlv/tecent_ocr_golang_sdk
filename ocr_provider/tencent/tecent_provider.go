@@ -42,14 +42,19 @@ var (
 )
 
 type TenCentOCRProvider struct {
+	AppKey string
+	AppID  string
 }
 
-func New() TenCentOCRProvider {
-	return TenCentOCRProvider{}
+func New(appKey, appID string) TenCentOCRProvider {
+	return TenCentOCRProvider{
+		AppKey: appKey,
+		AppID:  appID,
+	}
 }
 
 //create random string
-func RandString(n int) string {
+func randString(n int) string {
 	var letters = []rune("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	s := make([]rune, n)
 	for i := range s {
@@ -87,7 +92,7 @@ func getReqSign(u url.Values, app_key string) (sign string) {
 	return sign
 }
 
-func HttpPost(u url.Values) (respBody []byte, err error) {
+func httpPost(u url.Values) (respBody []byte, err error) {
 	url := "https://api.ai.qq.com/fcgi-bin/ocr/ocr_idcardocr"
 	contentType := "application/x-www-form-urlencoded"
 	resp, err := http.Post(url, contentType, strings.NewReader(u.Encode()))
@@ -106,10 +111,9 @@ func (tenCentOCRProvider TenCentOCRProvider) OcrCheck(imageUrl string, isBack bo
 		v            = url.Values{}
 		formatBase64 string
 	)
-	app_key := "KH34ke30YZSqoFQ5"
-	v.Add("app_id", "1106658456")
+	v.Add("app_id", tenCentOCRProvider.AppID)
 	v.Add("time_stamp", fmt.Sprintf("%d", now))
-	v.Add("nonce_str", RandString(32))
+	v.Add("nonce_str", randString(32))
 	formatBase64, err = getImageAndBase64(imageUrl)
 	if err != nil {
 		return ocrCommonData, err
@@ -120,10 +124,10 @@ func (tenCentOCRProvider TenCentOCRProvider) OcrCheck(imageUrl string, isBack bo
 	} else {
 		v.Add("card_type", "0")
 	}
-	sign := getReqSign(v, app_key)
+	sign := getReqSign(v, tenCentOCRProvider.AppKey)
 	v.Add("sign", sign)
 	respData := []byte{}
-	if respData, err = HttpPost(v); err != nil {
+	if respData, err = httpPost(v); err != nil {
 		return ocrCommonData, err
 	}
 	var response Response
