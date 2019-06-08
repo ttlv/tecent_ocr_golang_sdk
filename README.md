@@ -1,6 +1,6 @@
 ## Install
 
-Run `go get github.com/gopherSteven/tecent_ocr_golang_sdk`
+Run `go get github.com/fannatical-gopher/tecent_ocr_golang_sdk`
 
 ## Usage
 
