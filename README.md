@@ -10,7 +10,7 @@ package test
 import (
 	"testing"
 
-	"github.com/gopherSteven/tecent_ocr_golang_sdk/ocr_provider"
+	"github.com/fannatical-gopher/tecent_ocr_golang_sdk/ocr_provider"
 	"github.com/theplant/testingutils"
 )
 
